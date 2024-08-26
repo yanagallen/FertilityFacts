@@ -1,16 +1,17 @@
 ###########################################################################
 # Script: extract_acs.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/23/2024
-# Description: Extract ACS PUMS dat file to raw_data folder
+# Last Updated: 8/26/2024
+# Description: Extracts ACS PUMS dat file from raw and creates intermediate datasets
+# based on the American Community Survey PUMS
 
-# Input: usa_00001.dat (ACS PUMS 2000 - 2022 1 year dat file)
+# Input: usa_00001.dat (ACS PUMS 2000 - 2022 1 year dat file from raw)
 
-# Output: ACS PUMS 2000 - 2022 1 year cleaned file
+# Output: acs_percent_pregnant_cohorts.csv
 ###########################################################################
 
 # Installing required packages
-packages <- c("tidyverse", "ipumsr", "data.table", "viridis", "ggridges")
+packages <- c("tidyverse", "ipumsr", "data.table")
 
 to_install <- packages[!(packages %in% installed.packages()[,"Package"])]
 
@@ -33,7 +34,7 @@ data <- as.data.table(data)
 filtered_data <- data[FERTYR != 0, .(YEAR, AGE, SEX, FERTYR, PERWT, EXPWTP)]
 rm(data)
 
-# Summarizing fertility by age
+# Summarizing fertility by age across cohorts
 fertility_by_age_ex2020 <- filtered_data[YEAR != 2020, .(N = sum(PERWT)), by = .(YEAR, AGE, FERTYR)] %>% as.data.frame()
 fertility_by_age_2020 <- filtered_data[YEAR == 2020, .(N = sum(EXPWTP)), by = .(YEAR, AGE, FERTYR)] %>% as.data.frame()
 
@@ -51,23 +52,8 @@ percent_pregnant <- fertility_by_age %>%
   
   arrange(YEAR, AGE)
 
-# Fertility by age across cohorts
-percent_pregnant %>% 
-  ggplot(aes(x = AGE, y = PERCENT_PREGNANT, color = YEAR, group = YEAR)) +
-  geom_line() +
-  labs(title = "Did you give birth to a child in the last 12 months?",
-       x = "Age of Woman",
-       color = "Year") +
-  scale_y_continuous(labels = scales::label_percent(accuracy = 0.1),
-                     limits = c(0, 0.13),
-                     n.breaks = 6) +
-  scale_color_viridis(option = "D",
-                      begin = 1,
-                      end = 0) +
-  theme_minimal() +
-  theme(axis.title.y = element_blank(),
-        axis.line = element_line())
-
-
+# Saving intermediate dataset
+path = "refined/acs_percent_pregnant_cohorts.csv"
+write.csv(percent_pregnant, file = path)
 
 
