@@ -1,7 +1,7 @@
 ###########################################################################
 # Script: download_acs_1year.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/22/2024
+# Last Updated: 8/23/2024
 # Description: Download and extract ACS PUMS csv files to raw_data folder
 
 # Input: ACS PUMS 2000 - 2022 1 year zip files
@@ -28,7 +28,7 @@ options(timeout = 500)
 
 # Define prefix, years, and variables to download 
 url <- "https://www2.census.gov/programs-surveys/acs/data/pums/"
-years <- 2000:2022
+years <- 2009:2022
 vars <- c("SERIALNO", "PWGTP", "PUMA", "SEX", "AGEP", "FER")
 
 
@@ -55,7 +55,7 @@ for(i in 1:length(years)){
     usb <- usb %>% select(all_of(vars))
     
     # Rds file name
-    csvfile <- paste0("./raw_data/", "pus", years[i], ".csv")
+    csvfile <- paste0("FertilityFacts/raw_data/pums/", "pus", years[i], ".csv")
     
     # Consolidate
     usabpr <- rbind(usa, usb)
@@ -78,7 +78,7 @@ for(i in 1:length(years)){
     us <- us %>% select(all_of(vars))
     
     # RDS file name
-    csvfile <- paste0("./raw_data/", "pus", years[i], ".csv")
+    csvfile <- paste0("FertilityFacts/raw_data/pums/", "pus", years[i], ".csv")
     
     # Save files
     write.csv(us, csvfile)
@@ -90,4 +90,4 @@ for(i in 1:length(years)){
   
 }
 
-
+csvfile <- paste0("FertilityFacts/raw_data/pums/", "pus", 2009, ".csv")
