@@ -87,8 +87,10 @@ for(i in 1:length(plot_list)) {
   figure <- tfr_line_plot(data, plot_list[[i]], start, end)
   
   figure_path <- paste0("figures/wb_tfr_", plot_names[i], ".jpeg")
+  overleaf <- paste0("overleaf/wb_tfr_", plot_names[i], ".jpeg")
   
   ggsave(filename = figure_path, plot = figure, dpi = 320, width = 6, height = 5)
+  ggsave(filename = overleaf, plot = figure, dpi = 320, width = 6, height = 5)
   
 }
 
