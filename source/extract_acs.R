@@ -1,7 +1,7 @@
 ###########################################################################
 # Script: extract_acs.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/26/2024
+# Last Updated: 8/27/2024
 # Description: Extracts ACS PUMS dat file from raw and creates intermediate datasets
 # based on the American Community Survey PUMS
 
@@ -54,6 +54,4 @@ percent_pregnant <- fertility_by_age %>%
 
 # Saving intermediate dataset
 path = "refined/acs_percent_pregnant_cohorts.csv"
-write.csv(percent_pregnant, file = path)
-
-
+write.csv(percent_pregnant, file = path, row.names = FALSE)

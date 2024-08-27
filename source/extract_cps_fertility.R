@@ -63,5 +63,5 @@ total_fertility <- data_mothers_1980_2022 %>%
 path_data_mothers_1980_2022 <- "refined/cps_fertility_1980_2022.csv"
 path_total_fertility <- "refined/cps_total_fertility.csv"
 
-write.csv(data_mothers_1980_2022, file = path_data_mothers_1980_2022)
-write.csv(total_fertility, file = path_total_fertility)
+write.csv(data_mothers_1980_2022, file = path_data_mothers_1980_2022, row.names = FALSE)
+write.csv(total_fertility, file = path_total_fertility, row.names = FALSE)
