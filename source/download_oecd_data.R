@@ -19,8 +19,13 @@ if(length(to_install) > 0) install.packages(to_install)
 lapply(packages, require, character.only = TRUE)
 
 # Installing development version of OECD package
-install_github("expersso/OECD")
-library(OECD)
+github_packages <- c("OECD")
+
+to_install_git <- github_packages[!(github_packages %in% installed.packages()[,"Package"])]
+
+if(length(to_install_git) > 0) install_github(paste0("expersso/", to_install_git))
+
+lapply(github_packages, require, character.only = TRUE)
 
 # Clean workspace
 rm(list = ls())
