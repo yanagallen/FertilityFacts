@@ -1,8 +1,8 @@
 ###########################################################################
 # Script: download_wb_data.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/27/2024
-# Description: Download and extract World Bank fertility data to raw_data folder
+# Last Updated: 8/28/2024
+# Description: Download and extract World Bank fertility data to refined folder
 
 # Input: World Bank Fertility raw data from WB API
 
