@@ -1,17 +1,17 @@
 ###########################################################################
 # Script: cps_fertility_age_first_birth.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/27/2024
+# Last Updated: 8/29/2024
 # Description: Extracts CPS dat file from raw and creates intermediate datasets
 # based on the Fertility Supplement of the CPS
 
 # Input: cps_total_fertility.csv and cps_fertility_1980_2022.csv
 
-# Output: 
+# Output: figures/cps_total_fertility.jpeg
 ###########################################################################
 
 # Installing required packages
-packages <- c("tidyverse", "viridis")
+packages <- c("tidyverse", "viridis", "stargazer")
 
 to_install <- packages[!(packages %in% installed.packages()[,"Package"])]
 
@@ -26,43 +26,51 @@ rm(list = ls())
 setwd("C:/Users/gustavoml/Desktop/Projects/FertilityFacts")
 
 # Load intermediate datasets
-total_fertility <- read.csv("refined/cps_total_fertility.csv")
-mothers_1980_2022 <- read.csv("refined/cps_fertility_1980_2022.csv")
+women_1980_2022 <- read.csv("refined/cps_women_1980_2022.csv")
 
-# Generating figures for Total Fertility by Age of First Birth and Educational Level
+women_1980_2022 <- women_1980_2022 %>% 
+  mutate(age_first_birth = fct_relevel(age_first_birth, 
+                                       "< 19", "20-24", "25-29", "30-34", "35-39", "40-44", "> 45"))
 
-mothers_1980_2022 <- mothers_1980_2022 %>% 
-  mutate(AGE_FIRST_BIRTH = fct_relevel(AGE_FIRST_BIRTH, 
-                                       "< 19", "20-24", "25-29", "30-34", "35-39", "40-44", "> 45"))
-total_fertility <- total_fertility %>% 
-  mutate(AGE_FIRST_BIRTH = fct_relevel(AGE_FIRST_BIRTH, 
-                                       "< 19", "20-24", "25-29", "30-34", "35-39", "40-44", "> 45"))
+# Generating numbers for Fertility by Age at First Birth and Educational Attainment
+total_fertility <- women_1980_2022 %>% 
+  
+  # Filter only women who ever gave birth and who have completed their fertility
+  filter(!(frever %in% c(0, 999)),  
+         age >= 45) %>% 
+  
+  group_by(year, age_first_birth) %>% 
+  summarise(children_per_woman = weighted.mean(frever, wtfinl),
+            children_per_woman_unw = mean(frever),
+            n_women = n()) %>% 
+  
+  ungroup()
+
+# Generating figure for Total Fertility by Age of First Birth
   
 ## Total Fertility by Age of First Birth
-mothers_1980_2022 %>% 
+plot_fertility <- total_fertility %>% 
   
-  filter(YEAR %in% (2012:2022)) %>% 
+  filter(year %in% c(1980,2022)) %>% 
   
-  group_by(YEAR, AGE_FIRST_BIRTH) %>%
-  summarise(CHILDREN_PER_WOMAN = weighted.mean(FREVER, WTFINL)) %>% 
-  ungroup() %>% 
-  
-  ggplot(aes(x = YEAR, y = CHILDREN_PER_WOMAN, color = AGE_FIRST_BIRTH)) +
-  geom_line() +
-  geom_point() +
-  theme_minimal()
-
-## Total Fertility by Age of First Birth and Educational Level
-total_fertility %>% 
-  filter(YEAR %in% c(1980, 2022)) %>% 
-  
-  ggplot(aes(x = AGE_FIRST_BIRTH, y = CHILDREN_PER_WOMAN, fill = EDUCATIONAL_LEVEL)) +
+  ggplot(aes(x = age_first_birth, y = children_per_woman, fill = as.factor(year))) +
   geom_col(position = "dodge") +
-  facet_wrap(~ YEAR) +
-  labs(x = "Age",
+  scale_fill_brewer(palette = "Paired") +
+  labs(x = "Age at First Birth",
        y = "Children per woman", 
-       fill = "Education:",
-       caption = "Source: Fertility Supplement of the Current Population Survey") +
+       fill = "Year:") +
   theme_minimal() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "top",
+        axis.text = element_text(size = 10),
+        axis.line = element_line(),
+        axis.ticks = element_line(),
+        panel.grid = element_blank())
+
+
+path <- "figures/cps_total_fertility.jpeg"
+path_overleaf <- "overleaf/cps_total_fertility.jpeg"
+
+ggsave(filename = path, plot = plot_fertility, dpi = 320, width = 6, height = 5)
+ggsave(filename = path_overleaf, plot = plot_fertility, dpi = 320, width = 6, height = 5)
+
 

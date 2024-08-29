@@ -6,7 +6,7 @@
 
 # Input: acs_percent_pregnant_cohorts.csv
 
-# Output: Figures based on ACS data
+# Output: figures/acs_births_across_years.jpeg
 ###########################################################################
 
 # Installing required packages
@@ -46,8 +46,9 @@ acs_figure <- acs_data %>%
 
 # Saving figures in output folder
 figure_path <- "figures/acs_births_across_years.jpeg"
-ggsave(figure_path, plot = acs_figure)
-
+overleaf_path <- "overleaf/acs_births_across_years.jpeg"
+ggsave(figure_path, plot = acs_figure, dpi = 320, width = 6, height = 5)
+ggsave(overleaf_path, plot = acs_figure, dpi = 320, width = 6, height = 5)
 
 
 
