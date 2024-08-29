@@ -51,14 +51,16 @@ clean_oecd_socx <- function(raw_data) {
     
     select(ObsValue, REF_AREA, TIME_PERIOD) %>% 
     
-    rename(country = REF_AREA,
+    rename(country_code = REF_AREA,
            year = TIME_PERIOD) %>% 
     
     mutate(ObsValue = as.numeric(ObsValue)) %>% 
     
-    complete(year, country) %>% 
+    complete(year, country_code) %>% 
     
-    arrange(country, year)
+    arrange(country_code, year) %>% 
+    
+    select(country_code, year, ObsValue)
   
 }
 
@@ -69,12 +71,12 @@ clean_pct_gdp <- clean_oecd_socx(raw_pct_gdp)
 
 cleaned_data <- clean_2015usd %>% 
   
-  left_join(clean_pct_gdp, by = c("year", "country")) %>% 
+  left_join(clean_pct_gdp, by = c("country_code", "year")) %>% 
   
-  rename(usd_ps_2015 = ObsValue.x,
-         pct_gdp = ObsValue.y)
+  rename(pc_family_spending_2015usd = ObsValue.x,
+         family_spending_to_gdp = ObsValue.y)
 
 # Saving final dataset
 path = "refined/oecd_spending_data.csv"
-write.csv(cleaned_data, file = path)
+write.csv(cleaned_data, file = path, row.names = FALSE)
 
