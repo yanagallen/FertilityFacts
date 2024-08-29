@@ -30,14 +30,14 @@ women_1980_2022 <- read.csv("refined/cps_women_1980_2022.csv")
 
 women_1980_2022 <- women_1980_2022 %>% 
   mutate(age_first_birth = fct_relevel(age_first_birth, 
-                                       "< 19", "20-24", "25-29", "30-34", "35-39", "40-44", "> 45"))
+                                       "< 19", "20-24", "25-29", "30-34", "35-39", "> 40"))
 
 # Generating numbers for Fertility by Age at First Birth and Educational Attainment
 total_fertility <- women_1980_2022 %>% 
   
-  # Filter only women who ever gave birth and who have completed their fertility
+  # Filter only women who ever gave birth and who have completed their fertility (between 45 and 50 y.o. for comparability)
   filter(!(frever %in% c(0, 999)),  
-         age >= 45) %>% 
+         age %in% c(45:50)) %>% 
   
   group_by(year, age_first_birth) %>% 
   summarise(children_per_woman = weighted.mean(frever, wtfinl),
@@ -51,7 +51,7 @@ total_fertility <- women_1980_2022 %>%
 ## Total Fertility by Age of First Birth
 plot_fertility <- total_fertility %>% 
   
-  filter(year %in% c(1980,2022)) %>% 
+  filter(year %in% c(1980, 1990, 2016)) %>% 
   
   ggplot(aes(x = age_first_birth, y = children_per_woman, fill = as.factor(year))) +
   geom_col(position = "dodge") +
@@ -60,11 +60,31 @@ plot_fertility <- total_fertility %>%
        y = "Children per woman", 
        fill = "Year:") +
   theme_minimal() +
-  theme(legend.position = "top",
+  theme(legend.position = "bottom",
         axis.text = element_text(size = 10),
         axis.line = element_line(),
         axis.ticks = element_line(),
         panel.grid = element_blank())
+
+## Table - Fertility by Age of First Birth
+
+wide_fertility <- total_fertility %>% 
+  filter(year %in% c(1980, 1990, 2016)) %>% 
+  select(-children_per_woman_unw) %>% 
+  pivot_wider(names_from = year, values_from = c(children_per_woman, n_women)) 
+
+sample_size <- wide_fertility %>% 
+  select(age_first_birth, starts_with("n_")) %>% 
+  mutate(across(starts_with("n_"), ~ as.double(.x))) %>% 
+  rename_with(~ sub("n_women_", "", .), starts_with("n_"))
+
+total_fertility_by_age <- wide_fertility %>% 
+  select(age_first_birth:children_per_woman_2016) %>% 
+  rename_with(~ sub("children_per_woman_", "", .), starts_with("children_")) 
+
+table <- rbind(total_fertility_by_age, sample_size) %>% 
+  arrange(age_first_birth)
+
 
 # Saving the generated figures
 path <- "figures/cps_total_fertility.jpeg"

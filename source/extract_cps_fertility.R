@@ -31,7 +31,7 @@ data <- read_ipums_micro(ddi)
 
 names(data) <- tolower(names(data))
 
-# Generating a dataset for mothers from 1980 - 2022
+# Generating a dataset for women in the 1980-2022 period
 data_women_1980_2022 <- data %>% 
   
   filter(year %in% c(1980, 1990, 1995, 2012, 2014, 2016, 2018, 2020, 2022),
@@ -44,10 +44,9 @@ data_women_1980_2022 <- data %>%
                                      frage < 30 ~ "25-29",
                                      frage < 35 ~ "30-34",
                                      frage < 40 ~ "35-39",
-                                     frage < 45 ~ "40-44",
-                                     TRUE ~ "> 45"),
+                                     TRUE ~ "> 40"),
          age_first_birth = fct_relevel(age_first_birth, 
-                                       "< 19", "20-24", "25-29", "30-34", "35-39", "40-44", "> 45"),
+                                       "< 19", "20-24", "25-29", "30-34", "35-39", "> 40"),
          educational_level = case_when(educ %in% 2:32 ~ "Basic Education",
                                        educ %in% 40:73 ~ "Secondary Education",
                                        educ %in% 80:100 ~ "Tertiary Education",
