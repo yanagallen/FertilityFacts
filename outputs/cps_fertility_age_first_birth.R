@@ -66,7 +66,7 @@ plot_fertility <- total_fertility %>%
         axis.ticks = element_line(),
         panel.grid = element_blank())
 
-
+# Saving the generated figures
 path <- "figures/cps_total_fertility.jpeg"
 path_overleaf <- "overleaf/cps_total_fertility.jpeg"
 
