@@ -1,7 +1,7 @@
 ###########################################################################
 # Script: cps_fertility_age_first_birth.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/29/2024
+# Last Updated: 8/30/2024
 # Description: Extracts CPS dat file from raw and creates intermediate datasets
 # based on the Fertility Supplement of the CPS
 
@@ -11,7 +11,7 @@
 ###########################################################################
 
 # Installing required packages
-packages <- c("tidyverse", "viridis", "stargazer")
+packages <- c("tidyverse", "viridis", "knitr", "kableExtra")
 
 to_install <- packages[!(packages %in% installed.packages()[,"Package"])]
 
