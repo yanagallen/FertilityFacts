@@ -1,8 +1,8 @@
 ###########################################################################
 # Script: wb_tfr_across_countries.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/27/2024
-# Description: Download and extract World Bank fertility data to raw_data folder
+# Last Updated: 9/24/2024
+# Description: Creates figures for TFR across the world
 
 # Input: wb_tfr_1960_2022.csv
 
@@ -27,7 +27,9 @@ setwd("C:/Users/gustavoml/Desktop/Projects/FertilityFacts")
 # Loading WB data
 tfr_data <- read.csv("refined/wb_tfr_1960_2022.csv")
 
+#===============================================================================
 # Total Fertility Rate (TFR) across selected countries and over time
+#===============================================================================
 
 tfr_line_plot <- function(tfr_data, countries, start_year, end_year) {
   
@@ -54,7 +56,10 @@ tfr_line_plot <- function(tfr_data, countries, start_year, end_year) {
   
 }
 
+#===============================================================================
 # Figure Parameters
+#===============================================================================
+
 start <- 1960
 end <- 2022
 data <- tfr_data
@@ -80,7 +85,9 @@ brics <- c("China", "Brazil", "India", "South Africa",
 plot_list <- list(main, latin_america, africa, asia, europe, brics)
 plot_names <- c("main", "latin_america", "africa", "asia", "europe", "brics")
 
+#===============================================================================
 # Generating figures
+#===============================================================================
 
 for(i in 1:length(plot_list)) {
   

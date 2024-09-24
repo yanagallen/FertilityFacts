@@ -1,7 +1,7 @@
 ###########################################################################
 # Script: oecd_spending_tfr.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/28/2024
+# Last Updated: 9/24/2024
 # Description: Creates figures for Policy Spending and Fertility Rates across 
 # OECD countries
 
@@ -30,7 +30,10 @@ rm(list = ls())
 # Set working directory
 setwd("C:/Users/gustavoml/Desktop/Projects/FertilityFacts")
 
+#===============================================================================
 # Loading WB and OECD data
+#===============================================================================
+
 spending_data <- read.csv("refined/oecd_spending_data.csv")
 tfr_data <- read.csv("refined/wb_tfr_1960_2022.csv")
 
@@ -44,7 +47,10 @@ oecd_data <- tfr_data %>%
   
   filter(country_code %in% oecd_countries)
 
+#===============================================================================
 # Creating the policy spending and TFR sample for figures
+#===============================================================================
+
 period <- c(1990, 2019)
 
 plot_data <- oecd_data %>% 
@@ -58,9 +64,9 @@ plot_data <- oecd_data %>%
   
   filter(year == 2019) 
 
-# Generating scatter plots
-
-## Levels
+#===============================================================================
+# Generating scatter plots - Levels
+#===============================================================================
 
 basic_scatter <- function(data, countries, x_var, label) {
   
@@ -84,9 +90,14 @@ peers <- c("ESP", "FRA", "DEU", "FIN", "NOR", "SWE", "GBR", "GRC", "JPN", "AUS",
            "DNK", "ITA", "NLD", "USA", "CHE", "BEL", "AUT", "IRL", "ISL", "CZE","PRT", 
            "POL")
 
-independent_vars <- c("family_spending_to_gdp", "pc_family_spending_2015usd")
-independent_vars_labels <- c("Public Spending on Family Policies (% of GDP)", "Per Capita Spending on Family Policies (2015 USD PPP)")
+independent_vars <- c("family_spending_to_gdp", 
+                      "pc_family_spending_2015usd")
+independent_vars_labels <- c("Public Spending on Family Policies (% of GDP)", 
+                             "Per Capita Spending on Family Policies (2015 USD PPP)")
 
+#===============================================================================
+# Saving figures in folder
+#===============================================================================
 
 for(i in 1:length(independent_vars)) {
   
@@ -100,7 +111,9 @@ for(i in 1:length(independent_vars)) {
   
 }
 
-## Changes between 2019 and 1990
+#===============================================================================
+# Generating scatter plots - Changes between 1990 and 2019
+#===============================================================================
 
 change_scatter <- function(data, countries, x_var, label) {
   
@@ -124,9 +137,14 @@ change_scatter <- function(data, countries, x_var, label) {
 }
 
 
-independent_vars_c <- c("pct_change_spending_to_gdp", "pct_change_spending")
-independent_vars_labels_c <- c("Change in Public Spending as % of GDP", "Change in Per Capita Spending")
+independent_vars_c <- c("pct_change_spending_to_gdp", 
+                        "pct_change_spending")
+independent_vars_labels_c <- c("Change in Public Spending as % of GDP", 
+                               "Change in Per Capita Spending")
 
+#===============================================================================
+# Saving figures in folder
+#===============================================================================
 
 for(i in 1:length(independent_vars_c)) {
   
