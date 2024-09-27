@@ -1,7 +1,7 @@
 ###########################################################################
 # Script: oecd_spending_tfr.R
 # Author: Gustavo Luchesi
-# Last Updated: 9/24/2024
+# Last Updated: 9/27/2024
 # Description: Creates figures for Policy Spending and Fertility Rates across 
 # OECD countries
 
@@ -16,7 +16,7 @@
 ###########################################################################
 
 # Installing required packages
-packages <- c("tidyverse", "paletteer", "ggrepel")
+packages <- c("tidyverse", "paletteer", "ggrepel", "scales")
 
 to_install <- packages[!(packages %in% installed.packages()[,"Package"])]
 
@@ -76,6 +76,7 @@ basic_scatter <- function(data, countries, x_var, label) {
     ggplot(aes(x = .data[[x_var]], y = tfr, label = country_code)) +
     geom_point() +
     geom_text_repel() +
+    scale_x_continuous(labels = comma) + 
     scale_y_continuous(limits = c(1, 2)) +
     labs(x = label,
          y = "Total Fertility Rate") +
@@ -93,7 +94,7 @@ peers <- c("ESP", "FRA", "DEU", "FIN", "NOR", "SWE", "GBR", "GRC", "JPN", "AUS",
 independent_vars <- c("family_spending_to_gdp", 
                       "pc_family_spending_2015usd")
 independent_vars_labels <- c("Public Spending on Family Policies (% of GDP)", 
-                             "Per Capita Spending on Family Policies (2015 USD PPP)")
+                             "Per Capita Public Spending on Family Policies in 2019 (2015 USD PPP)")
 
 #===============================================================================
 # Saving figures in folder
@@ -125,10 +126,12 @@ change_scatter <- function(data, countries, x_var, label) {
     geom_text_repel() +
     geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.1) +
     geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.1) +
-    scale_x_continuous(limits = c(-0.5, NA)) +
-    scale_y_continuous(limits = c(-0.35, 0.1)) +
+    scale_x_continuous(limits = c(-0.5, NA),
+                       labels = scales::percent) +
+    scale_y_continuous(limits = c(-0.35, 0.1),
+                       labels = scales::percent) +
     labs(x = label,
-         y = "Change in Total Fertility Rate") +
+         y = "Change in TFR Between 1990 and 2019") +
     theme_minimal() +
     theme(axis.text = element_text(size = 10),
           axis.line = element_line(),
@@ -140,7 +143,7 @@ change_scatter <- function(data, countries, x_var, label) {
 independent_vars_c <- c("pct_change_spending_to_gdp", 
                         "pct_change_spending")
 independent_vars_labels_c <- c("Change in Public Spending as % of GDP", 
-                               "Change in Per Capita Spending")
+                               "Change in Per Capita Public Spending Between 1990 and 2019")
 
 #===============================================================================
 # Saving figures in folder

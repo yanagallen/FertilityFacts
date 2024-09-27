@@ -1,7 +1,7 @@
 ###########################################################################
 # Script: acs_births_across_cohorts.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/26/2024
+# Last Updated: 9/27/2024
 # Description: Creates figures for births by mother's age across cohorts
 
 # Input: acs_percent_pregnant_cohorts.csv
@@ -33,7 +33,8 @@ acs_figure <- acs_data %>%
   geom_line() +
   labs(title = "Did you give birth to a child in the last 12 months?",
        x = "Age of Woman",
-       color = "Year") +
+       color = "Year",
+       caption = "Source: American Community Survey, 2000-2022") +
   scale_y_continuous(labels = scales::label_percent(accuracy = 0.1),
                      limits = c(0, 0.13),
                      n.breaks = 6) +
@@ -42,7 +43,8 @@ acs_figure <- acs_data %>%
                       end = 0) +
   theme_minimal() +
   theme(axis.title.y = element_blank(),
-        axis.line = element_line())
+        axis.line = element_line(),
+        plot.caption = element_text(hjust = 0))
 
 # Saving figures in output folder
 figure_path <- "figures/acs_births_across_years.jpeg"
