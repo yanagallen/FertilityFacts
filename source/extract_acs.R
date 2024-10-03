@@ -55,3 +55,16 @@ percent_pregnant <- fertility_by_age %>%
 # Saving intermediate dataset
 path = "refined/acs_percent_pregnant_cohorts.csv"
 write.csv(percent_pregnant, file = path, row.names = FALSE)
+
+#============================================================================================
+# Loading Fertility by education ACS sample
+#============================================================================================
+
+# Loading extract into R and converting to data.table format
+ddi_educ <- read_ipums_ddi("raw/usa_00002.xml")
+data_educ <- read_ipums_micro(ddi_educ)
+
+
+
+
+
