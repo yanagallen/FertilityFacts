@@ -1,10 +1,10 @@
 ###########################################################################
 # Script: acs_nchildren_education.R
 # Author: Gustavo Luchesi
-# Last Updated: 10/7/2024
+# Last Updated: 10/14/2024
 # Description: Creates figures for number of children per education group
 
-# Input: acs_nchild_educ_groups.csv
+# Input: acs_educ_groups.rdata
 
 # Output: figures/acs_nchildren_education.jpeg
 ###########################################################################
@@ -25,28 +25,39 @@ rm(list = ls())
 setwd("C:/Users/gustavoml/Desktop/Projects/FertilityFacts")
 
 # Load intermediate dataset
-acs_data <- read.csv("refined/acs_nchild_educ_groups.csv")
+load("refined/acs_educ_groups.rdata")
 
-acs_data <- acs_data %>% 
-  mutate(educ_group = fct_relevel(educ_group, c("PhD", "Master's and non-STEM major", "Master's and STEM major", 
-                                                "Master's and Doctor", "Master's and Lawyer", "STEM Bachelor's",
-                                                "Non-STEM Bachelor's", "Associate's degree","Some college", 
-                                                "Less than college")))
+#===========================================================================
+# Testing alternative ways to group fertility data by education attainment
+#===========================================================================
+
+grouped_data <- data_educ %>% 
+  
+  filter(!is.na(educ_group),
+         AGE %in% c(43:47)) %>% 
+  
+  group_by(YEAR, educ_group) %>% 
+  summarise(n_child = weighted.mean(NCHILD, w = PERWT),
+            n_sample = n(),
+            total_weight = sum(PERWT)) %>% 
+  ungroup()
 
 #===========================================================================
 # Creating figure of number of children by education group
 #===========================================================================
 
-acs_data %>% 
+grouped_data %>% 
   ggplot(aes(x = YEAR, y = n_child, color = educ_group)) +
   geom_point(size = 2.5) +
   geom_line(linewidth = 0.75) +
   scale_x_continuous(limits = c(2009, 2022), 
                      breaks = seq(2009, 2022, 2)) +
   scale_color_paletteer_d("ggthemes::Red_Blue_Brown") +
-  labs(x = "Year", y = "Average number of children", color = "Education Group:") +
+  labs(title = "Number of own children living in HH",
+       x = "Year", color = "Education Group:") +
   theme_minimal() +
-  theme(axis.text = element_text(size = 10),
+  theme(axis.title.y = element_blank(),
+        axis.text = element_text(size = 10),
         axis.line = element_line(),
         axis.ticks = element_line(),
         panel.grid.major = element_line(linetype = "dashed"),

@@ -31,7 +31,7 @@ quietly infix                  ///
   int     occ         114-117  ///
   int     occ2010     118-121  ///
   str     occsoc      122-127  ///
-  using `"usa_00003.dat"'
+  using `"usa_00004.dat"'
 
 replace hhwt       = hhwt       / 100
 replace perwt      = perwt      / 100

@@ -1,17 +1,17 @@
 ###########################################################################
 # Script: extract_acs.R
 # Author: Gustavo Luchesi
-# Last Updated: 10/7/2024
+# Last Updated: 10/14/2024
 # Description: Extracts ACS PUMS dat file from raw and creates intermediate datasets
 # based on the American Community Survey PUMS
 
 # Input: 
 # usa_00001.dat (ACS PUMS 2000 - 2022 1 year dat file from raw)
-# usa_00003.dat
+# usa_00004.dat
 
 # Output: 
 # acs_percent_pregnant_cohorts.csv
-# acs_nchild_educ_groups.csv
+# acs_educ_groups.rdata
 ###########################################################################
 
 # Installing required packages
@@ -65,7 +65,7 @@ write.csv(percent_pregnant, file = path, row.names = FALSE)
 #============================================================================================
 
 # Loading extract into R and converting to data.table format
-ddi_educ <- read_ipums_ddi("raw/usa_00003.xml")
+ddi_educ <- read_ipums_ddi("raw/usa_00004.xml")
 data_educ <- read_ipums_micro(ddi_educ)
 
 # STEM programs CIP codes
@@ -95,19 +95,38 @@ data_educ <- data_educ %>%
                                 EDUCD == 116 ~ "PhD"),
          educ_group = fct_relevel(educ_group, c("PhD", "Master's and non-STEM major", "Master's and STEM major", 
                                                 "Master's and Doctor", "Master's and Lawyer", "STEM Bachelor's",
-                                                "Non-STEM Bachelor's", "Associate's degree","Some college", 
-                                                "Less than college"))) 
-
-# Collapsing at the education group level
-nchild_education <- data_educ %>% 
-  filter(YEAR >= 2009) %>% 
-  
-  group_by(YEAR, educ_group) %>% 
-  summarise(n_child = weighted.mean(NCHILD, w = PERWT),
-            sample = n()) %>% 
-  ungroup()
+                                                "Non-STEM Bachelor's", "Associate's degree", "Some college", 
+                                                "Less than college")),
+         
+         educ_group1 = case_when(EDUCD <= 64 ~ "Less than college",
+                                 EDUCD %in% c(65:100) ~ "Some college or Associate's degree",
+                                 EDUCD == 101 ~ "Bachelor's degree",
+                                 EDUCD %in% c(114:115) & OCC2010 == 2100 ~ "Master's and Lawyer",
+                                 EDUCD %in% c(114:115) & OCC2010 == 3060 ~ "Master's and Doctor",
+                                 EDUCD %in% c(114:115) & !OCC2010 %in% c(2100, 3060) ~ "Master's degree (except Lawyers and Doctors)",
+                                 EDUCD == 116 ~ "PhD"),
+         educ_group1 = fct_relevel(educ_group1, c("PhD", "Master's degree (except Lawyers and Doctors)",
+                                                  "Master's and Doctor", "Master's and Lawyer", "Bachelor's degree",
+                                                  "Some college or Associate's degree", "Less than college")),
+         
+         educ_group2 = case_when(EDUCD <= 64 ~ "Less than college",
+                                 EDUCD %in% c(65:100) ~ "Some college or Associate's degree",
+                                 EDUCD == 101 ~ "Bachelor's degree",
+                                 EDUCD %in% c(114:115) & OCC2010 %in% c(2100, 3060) ~ "Master's and Lawyer or Doctor",
+                                 EDUCD %in% c(114:115) & !OCC2010 %in% c(2100, 3060) ~ "Master's degree (except Lawyers and Doctors)",
+                                 EDUCD == 116 ~ "PhD"),
+         educ_group2 = fct_relevel(educ_group2, c("PhD", "Master's degree (except Lawyers and Doctors)",
+                                                  "Master's and Lawyer or Doctor", "Bachelor's degree",
+                                                  "Some college or Associate's degree", "Less than college")),
+         
+         educ_simplified = case_when(EDUC < 6 ~ "< 12",
+                                     EDUC == 6 ~ "12",
+                                     EDUC %in% c(7:9) ~ "13-15",
+                                     EDUC == 10 ~ "16",
+                                     EDUC == 11 ~ "> 16"),
+         educ_simplified = fct_relevel(educ_simplified, c("< 12", "12", "13-15", "16", "> 16"))) 
 
 # Saving intermediate dataset
-path_educ = "refined/acs_nchild_educ_groups.csv"
-write.csv(nchild_education, file = path_educ, row.names = FALSE)
+path_educ = "refined/acs_educ_groups.rdata"
+save(data_educ, file = path_educ)
 
