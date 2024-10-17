@@ -24,8 +24,9 @@ rm(list = ls())
 # Set working directory
 setwd("C:/Users/gustavoml/Desktop/Projects/FertilityFacts")
 
-# Load intermediate dataset
+# Load intermediate datasets
 load("refined/acs_educ_groups.rdata")
+load("refined/cps_educ_groups.rdata")
 
 #===========================================================================
 # Function for mean number of children in the HH by education group
@@ -171,5 +172,126 @@ figure3_path <- "figures/barplot_hhchildren1_45_50.jpeg"
 overleaf3_path <- "overleaf/barplot_hhchildren1_45_50.jpeg"
 ggsave(figure3_path, plot = col_plot2, dpi = 320, width = 8, height = 5)
 ggsave(overleaf3_path, plot = col_plot2, dpi = 320, width = 8, height = 5)
+
+#===========================================================================
+# Generating plots for children ever born (1970-1990) by maternal education
+#===========================================================================
+
+# 45 to 50 years of age
+completed_fertility_45_50 <- data_educ %>% 
+  mutate(educ_simplified = fct_relevel(educ_simplified, c("< 12", "12", "13-15", "16", "> 16"))) %>% 
+  
+  filter(YEAR %in% c(1970:1990),
+         AGE %in% c(45:50)) %>% 
+  group_by(YEAR, educ_simplified) %>% 
+  summarise(nchildren_born = weighted.mean(CHBORN, w = PERWT),
+            records = n()) %>% 
+  ungroup()
+
+completed_fertility_plot_45_50 <- completed_fertility_45_50 %>% 
+  
+  ggplot(aes(x = educ_simplified, y = nchildren_born,
+             group = YEAR, color = factor(YEAR), shape = factor(YEAR))) + 
+  geom_line(aes(linetype = factor(YEAR)), linewidth = 1) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("1970" = "#1b9e77", 
+                                "1980" = "#7570b3", 
+                                "1990" = "#e31a1c")) +
+  scale_shape_manual(values = c(15, 17, 18, 8, 16)) + 
+  scale_linetype_manual(values = c("dashed", "dotted", "dotdash", "twodash", "solid")) +
+  labs(x = "Years of Schooling", y = "Completed Fertility", 
+       color = "Year", shape = "Year", linetype = "Year",
+       title = "Children ever born (Women aged 45-50)") +
+  theme_minimal() +
+  theme(legend.position = "right",
+        axis.text = element_text(size = 10),
+        axis.line = element_line(),
+        axis.ticks = element_line(),
+        panel.grid = element_blank())
+  
+figure4_path <- "figures/completed_fetility_45_50.jpeg"
+overleaf4_path <- "overleaf/completed_fetility_45_50.jpeg"
+ggsave(figure4_path, plot = completed_fertility_plot_45_50, dpi = 320, width = 7, height = 5)
+ggsave(overleaf4_path, plot = completed_fertility_plot_45_50, dpi = 320, width = 7, height = 5)
+
+rm(completed_fertility_45_50, completed_fertility_plot_45_50)
+
+# 40 to 50 years of age
+completed_fertility_40_50 <- data_educ %>% 
+  mutate(educ_simplified = fct_relevel(educ_simplified, c("< 12", "12", "13-15", "16", "> 16"))) %>% 
+  
+  filter(YEAR %in% c(1970:1990),
+         AGE %in% c(40:50)) %>% 
+  group_by(YEAR, educ_simplified) %>% 
+  summarise(nchildren_born = weighted.mean(CHBORN, w = PERWT),
+            records = n()) %>% 
+  ungroup()
+
+completed_fertility_plot_40_50 <- completed_fertility_40_50 %>% 
+  
+  ggplot(aes(x = educ_simplified, y = nchildren_born,
+             group = YEAR, color = factor(YEAR), shape = factor(YEAR))) + 
+  geom_line(aes(linetype = factor(YEAR)), linewidth = 1) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("1970" = "#1b9e77", 
+                                "1980" = "#7570b3", 
+                                "1990" = "#e31a1c")) +
+  scale_shape_manual(values = c(15, 17, 18, 8, 16)) + 
+  scale_linetype_manual(values = c("dashed", "dotted", "dotdash", "twodash", "solid")) +
+  labs(x = "Years of Schooling", y = "Completed Fertility", 
+       color = "Year", shape = "Year", linetype = "Year",
+       title = "Children ever born (Women aged 40-50)") +
+  theme_minimal() +
+  theme(legend.position = "right",
+        axis.text = element_text(size = 10),
+        axis.line = element_line(),
+        axis.ticks = element_line(),
+        panel.grid = element_blank())
+
+figure5_path <- "figures/completed_fetility_40_50.jpeg"
+overleaf5_path <- "overleaf/completed_fetility_40_50.jpeg"
+ggsave(figure5_path, plot = completed_fertility_plot_40_50, dpi = 320, width = 7, height = 5)
+ggsave(overleaf5_path, plot = completed_fertility_plot_40_50, dpi = 320, width = 7, height = 5)
+
+rm(completed_fertility_40_50, completed_fertility_plot_40_50)
+
+#===========================================================================
+# Generating plots for children ever born from CPS data
+#===========================================================================
+
+completed_fertility_cps <- cpsdata_educ %>% 
+  filter(year %in% c(1992, 2000, 2010, 2016),
+         age %in% c(40:44)) %>% 
+  group_by(year, educ_group3) %>% 
+  summarise(nchildren_born = weighted.mean(frever, w = wtfinl),
+            records = n()) %>% 
+  ungroup()
+  
+completed_fertility_plot_cps <- completed_fertility_cps %>% 
+  
+  ggplot(aes(x = educ_group3, y = nchildren_born,
+             group = year, color = factor(year), shape = factor(year))) + 
+  geom_line(aes(linetype = factor(year)), linewidth = 1) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("1992" = "#1b9e77", 
+                                "2000" = "#7570b3", 
+                                "2010" = "#e31a1c",
+                                "2016" = "#d95f02")) +
+  scale_shape_manual(values = c(15, 17, 18, 8)) + 
+  scale_linetype_manual(values = c("dashed", "dotted", "dotdash", "twodash")) +
+  labs(x = "Education", y = "Completed Fertility", 
+       color = "Year", shape = "Year", linetype = "Year",
+       title = "Children ever born (CPS, Women aged 40-44)") +
+  theme_minimal() +
+  theme(legend.position = "right",
+        axis.text = element_text(size = 10),
+        axis.line = element_line(),
+        axis.ticks = element_line(),
+        panel.grid = element_blank())
+
+figure6_path <- "figures/completed_fetility_cps_40_44.jpeg"
+overleaf6_path <- "overleaf/completed_fetility_cps_40_44.jpeg"
+ggsave(figure6_path, plot = completed_fertility_plot_cps, dpi = 320, width = 7, height = 5)
+ggsave(overleaf6_path, plot = completed_fertility_plot_cps, dpi = 320, width = 7, height = 5)
 
 

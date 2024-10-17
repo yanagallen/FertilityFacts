@@ -1,13 +1,13 @@
 ###########################################################################
 # Script: extract_acs.R
 # Author: Gustavo Luchesi
-# Last Updated: 10/16/2024
+# Last Updated: 10/17/2024
 # Description: Extracts ACS PUMS dat file from raw and creates intermediate datasets
 # based on the American Community Survey PUMS
 
 # Input: 
 # usa_00001.dat (ACS PUMS 2000 - 2022 1 year dat file from raw)
-# usa_00004.dat
+# usa_00005.dat
 
 # Output: 
 # acs_percent_pregnant_cohorts.csv
@@ -65,7 +65,7 @@ write.csv(percent_pregnant, file = path, row.names = FALSE)
 #============================================================================================
 
 # Loading extract into R and converting to data.table format
-ddi_educ <- read_ipums_ddi("raw/usa_00004.xml")
+ddi_educ <- read_ipums_ddi("raw/usa_00005.xml")
 data_educ <- read_ipums_micro(ddi_educ)
 
 # STEM programs CIP codes

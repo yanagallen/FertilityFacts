@@ -22,16 +22,17 @@ quietly infix                  ///
   byte    yngch       91-92    ///
   byte    sex         93-93    ///
   int     age         94-96    ///
-  byte    educ        97-98    ///
-  int     educd       99-101   ///
-  byte    degfield    102-103  ///
-  int     degfieldd   104-107  ///
-  byte    degfield2   108-109  ///
-  int     degfield2d  110-113  ///
-  int     occ         114-117  ///
-  int     occ2010     118-121  ///
-  str     occsoc      122-127  ///
-  using `"usa_00004.dat"'
+  byte    chborn      97-98    ///
+  byte    educ        99-100   ///
+  int     educd       101-103  ///
+  byte    degfield    104-105  ///
+  int     degfieldd   106-109  ///
+  byte    degfield2   110-111  ///
+  int     degfield2d  112-115  ///
+  int     occ         116-119  ///
+  int     occ2010     120-123  ///
+  str     occsoc      124-129  ///
+  using `"usa_00005.dat"'
 
 replace hhwt       = hhwt       / 100
 replace perwt      = perwt      / 100
@@ -61,6 +62,7 @@ label var eldch      `"Age of eldest own child in household"'
 label var yngch      `"Age of youngest own child in household"'
 label var sex        `"Sex"'
 label var age        `"Age"'
+label var chborn     `"Children ever born"'
 label var educ       `"Educational attainment [general version]"'
 label var educd      `"Educational attainment [detailed version]"'
 label var degfield   `"Field of degree [general version]"'
@@ -639,6 +641,72 @@ label define age_lbl 135 `"135"', add
 label define age_lbl 140 `"140"', add
 label define age_lbl 999 `"Missing"', add
 label values age age_lbl
+
+label define chborn_lbl 00 `"N/A"'
+label define chborn_lbl 01 `"No children"', add
+label define chborn_lbl 02 `"1 child"', add
+label define chborn_lbl 03 `"2 children"', add
+label define chborn_lbl 04 `"3"', add
+label define chborn_lbl 05 `"4"', add
+label define chborn_lbl 06 `"5"', add
+label define chborn_lbl 07 `"6"', add
+label define chborn_lbl 08 `"7"', add
+label define chborn_lbl 09 `"8"', add
+label define chborn_lbl 10 `"9"', add
+label define chborn_lbl 11 `"10"', add
+label define chborn_lbl 12 `"11"', add
+label define chborn_lbl 13 `"12 (12+ 1960-1990)"', add
+label define chborn_lbl 14 `"13"', add
+label define chborn_lbl 15 `"14"', add
+label define chborn_lbl 16 `"15"', add
+label define chborn_lbl 17 `"16"', add
+label define chborn_lbl 18 `"17"', add
+label define chborn_lbl 19 `"18"', add
+label define chborn_lbl 20 `"19"', add
+label define chborn_lbl 21 `"20"', add
+label define chborn_lbl 22 `"21"', add
+label define chborn_lbl 23 `"22"', add
+label define chborn_lbl 24 `"23"', add
+label define chborn_lbl 25 `"24"', add
+label define chborn_lbl 26 `"25 (25+ 1950)"', add
+label define chborn_lbl 27 `"26"', add
+label define chborn_lbl 28 `"27"', add
+label define chborn_lbl 29 `"28"', add
+label define chborn_lbl 30 `"29"', add
+label define chborn_lbl 31 `"30"', add
+label define chborn_lbl 32 `"31"', add
+label define chborn_lbl 33 `"32"', add
+label define chborn_lbl 34 `"33"', add
+label define chborn_lbl 35 `"34"', add
+label define chborn_lbl 36 `"35"', add
+label define chborn_lbl 37 `"36"', add
+label define chborn_lbl 38 `"37"', add
+label define chborn_lbl 39 `"38"', add
+label define chborn_lbl 40 `"39"', add
+label define chborn_lbl 41 `"40"', add
+label define chborn_lbl 42 `"41"', add
+label define chborn_lbl 43 `"42"', add
+label define chborn_lbl 44 `"43"', add
+label define chborn_lbl 45 `"44"', add
+label define chborn_lbl 46 `"45"', add
+label define chborn_lbl 47 `"46"', add
+label define chborn_lbl 48 `"47"', add
+label define chborn_lbl 49 `"48"', add
+label define chborn_lbl 50 `"49"', add
+label define chborn_lbl 51 `"50"', add
+label define chborn_lbl 52 `"51"', add
+label define chborn_lbl 53 `"52"', add
+label define chborn_lbl 54 `"53"', add
+label define chborn_lbl 55 `"54"', add
+label define chborn_lbl 56 `"55"', add
+label define chborn_lbl 57 `"56"', add
+label define chborn_lbl 58 `"57"', add
+label define chborn_lbl 61 `"60"', add
+label define chborn_lbl 87 `"87"', add
+label define chborn_lbl 97 `"Unknown"', add
+label define chborn_lbl 98 `"Illegible"', add
+label define chborn_lbl 99 `"Missing"', add
+label values chborn chborn_lbl
 
 label define educ_lbl 00 `"N/A or no schooling"'
 label define educ_lbl 01 `"Nursery school to grade 4"', add

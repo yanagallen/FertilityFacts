@@ -1,11 +1,11 @@
 ###########################################################################
 # Script: extract_cps_fertility.R
 # Author: Gustavo Luchesi
-# Last Updated: 8/29/2024
+# Last Updated: 10/17/2024
 # Description: Extracts CPS dat file from raw and creates intermediate datasets
 # based on the Fertility Supplement of the CPS
 
-# Input: cps_00002.dat
+# Input: cps_00031.dat
 
 # Output: cps_women_1980_2022.csv
 ###########################################################################
@@ -26,7 +26,7 @@ rm(list = ls())
 setwd("C:/Users/gustavoml/Desktop/Projects/FertilityFacts")
 
 # Loading extract into R
-ddi <- read_ipums_ddi("raw/cps_00002.xml")
+ddi <- read_ipums_ddi("raw/cps_00031.xml")
 data <- read_ipums_micro(ddi)
 
 names(data) <- tolower(names(data))
@@ -56,3 +56,32 @@ data_women_1980_2022 <- data %>%
 path_data_women_1980_2022 <- "refined/cps_women_1980_2022.csv"
 
 write.csv(data_women_1980_2022, file = path_data_women_1980_2022, row.names = FALSE)
+
+#===========================================================================
+# Generating an intermediate dataset for total fertility by education
+#===========================================================================
+
+cpsdata_educ <- data %>% 
+  
+  filter(year %in% c(1992:2016),
+         sex == 2, 
+         age %in% c(40:55)) %>% 
+  mutate(educ_group2 = case_when(educ <= 73 ~ "Less than college",
+                                 educ %in% c(80:100) ~ "Some college",
+                                 educ %in% c(111) ~ "Bachelor's",
+                                 educ %in% c(123:124) & occ2010 %in% c(2100, 3060) ~ "Master's (Lawyer/Doctor)",
+                                 educ %in% c(123:124) & !occ2010 %in% c(2100, 3060) ~ "Master's",
+                                 educ == 125 ~ "PhD"),
+         educ_group2 = fct_relevel(educ_group2, c("Less than college", "Some college", "Bachelor's",
+                                                  "Master's (Lawyer/Doctor)", "Master's", "PhD")),
+         educ_group3 = case_when(educ <= 73 ~ "Less than college",
+                                 educ %in% c(80:100) ~ "Some college",
+                                 educ %in% c(111) ~ "Bachelor's",
+                                 educ %in% c(123:124) ~ "Master's",
+                                 educ == 125 ~ "PhD"),
+         educ_group3 = fct_relevel(educ_group3, c("Less than college", "Some college", "Bachelor's",
+                                                  "Master's", "PhD")))
+  
+
+path_educ = "refined/cps_educ_groups.rdata"
+save(cpsdata_educ, file = path_educ)
